@@ -16,8 +16,8 @@ void main() {
     });
 
     test('tropical preset has lower seasonal swing than temperate', () {
-      double tropicalRange = _seasonalRange(ClimatePreset.tropical);
-      double temperateRange = _seasonalRange(ClimatePreset.temperate);
+      final tropicalRange = _seasonalRange(ClimatePreset.tropical);
+      final temperateRange = _seasonalRange(ClimatePreset.temperate);
       expect(tropicalRange, lessThan(temperateRange));
     });
 
