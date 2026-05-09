@@ -37,6 +37,12 @@ farm.plant(fieldId: 'a', crop: Crop.tomato);
 farm.advanceTurn();           // one in-game week passes
 print(farm.field('a').growthStage);   // 'seedling' | 'growing' | 'ready'
 print(farm.economy.expectedPrice(Crop.tomato, quality: 0.8));
+
+// Crop rotation matters: heavy feeders drain soil fertility, and
+// planting the same family back-to-back drains it faster.
+print(farm.field('a').fertility);              // 1.0 on virgin land
+farm.harvest('a');                             // tomato → fertility -0.25
+farm.plant(fieldId: 'a', crop: Crop.legumeCover); // restorer crop
 ```
 
 The example app expands this into a full playable loop with Flame rendering, save/load via Hive, and a minimal HUD.
@@ -49,7 +55,7 @@ Once published to pub.dev:
 
 ```yaml
 dependencies:
-  oksigenia_farmkit: ^0.1.0-beta.1
+  oksigenia_farmkit: ^0.2.0-beta.1
 ```
 
 Until then, depend on the GitHub repo:
@@ -89,10 +95,10 @@ This is a **beta**. The data model and public API will move until `1.0.0`. See [
 Tracked work lives in the [project board](https://github.com/orgs/OksigeniaSL/projects). Highlights for `0.x`:
 
 - Crop pest / disease subsystem.
-- Soil degradation & rotation rewards.
+- ~~Soil degradation & rotation rewards.~~ Shipped in `0.2.0-beta.1`.
 - Multi-region weather (climates).
 - Saved-game migration helpers between minor versions.
-- Pub.dev publication after `0.2.0`.
+- Pub.dev publication after `0.3.0`.
 
 ---
 

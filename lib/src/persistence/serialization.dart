@@ -1,4 +1,5 @@
 import '../engine/crop.dart';
+import '../engine/crop_family.dart';
 import '../engine/farm.dart';
 import '../engine/field.dart';
 import '../engine/soil.dart';
@@ -7,11 +8,17 @@ import '../engine/soil.dart';
 /// dynamic>` so host apps are free to persist via Hive, shared_prefs,
 /// JSON files, or any other mechanism.
 ///
-/// The format is versioned (`schema: 1`). Loaders should refuse
-/// unknown schema versions rather than silently mis-interpret data.
+/// The format is versioned (`schema`). Loaders should refuse unknown
+/// schema versions rather than silently mis-interpret data; older
+/// known versions are migrated forward in-place by `applyFarmFromMap`.
 class Serialization {
   /// Current schema version. Bumped on any breaking change.
-  static const int schemaVersion = 1;
+  ///
+  /// History:
+  /// - `1`: initial release.
+  /// - `2`: adds `fertility`, `lastHarvestedFamily`, `consecutiveSameFamily`
+  ///   per field for soil degradation + crop rotation.
+  static const int schemaVersion = 2;
 
   /// Convert a `Farm` snapshot to a serializable map.
   static Map<String, dynamic> farmToMap(Farm farm) {
@@ -26,9 +33,14 @@ class Serialization {
   /// weather provider or the economy strategy — those are passed in
   /// from the host app along with the rest of the `Farm`. This keeps
   /// the persistence layer free of strategy serialization concerns.
+  ///
+  /// Schema `1` saves are migrated to schema `2` defaults: fertility
+  /// jumps to `1.0` (virgin land) and rotation history starts empty.
+  /// Saves at any other version throw `StateError` — the host app is
+  /// expected to run its own migration before loading.
   static void applyFarmFromMap(Farm farm, Map<String, dynamic> data) {
     final schema = data['schema'] as int?;
-    if (schema != schemaVersion) {
+    if (schema != schemaVersion && schema != 1) {
       throw StateError(
         'Unsupported save schema $schema (expected $schemaVersion). '
         'Run a migration before loading.',
@@ -59,18 +71,32 @@ class Serialization {
       if (f.crop != null) 'cropId': f.crop!.id,
       'turnsGrown': f.turnsGrown,
       'quality': f.quality,
+      'fertility': f.fertility,
+      if (f.lastHarvestedFamily != null)
+        'lastHarvestedFamily': f.lastHarvestedFamily!.name,
+      'consecutiveSameFamily': f.consecutiveSameFamily,
     };
   }
 
   static void _applyFieldFromMap(Field f, Map<String, dynamic> m) {
     final cropId = m['cropId'] as String?;
-    final crop = cropId == null
+    final crop = cropId == null ? null : _resolveCrop(cropId);
+    final familyName = m['lastHarvestedFamily'] as String?;
+    final family = familyName == null
         ? null
-        : _resolveCrop(cropId);
+        : CropFamily.values.firstWhere(
+            (e) => e.name == familyName,
+            orElse: () => throw StateError(
+              'Unknown crop family "$familyName" in save data.',
+            ),
+          );
     f.hydrateFromMap(
       crop: crop,
       turnsGrown: (m['turnsGrown'] as int?) ?? 0,
       quality: ((m['quality'] as num?) ?? 0).toDouble(),
+      fertility: ((m['fertility'] as num?) ?? 1.0).toDouble(),
+      lastHarvestedFamily: family,
+      consecutiveSameFamily: (m['consecutiveSameFamily'] as int?) ?? 0,
     );
   }
 
