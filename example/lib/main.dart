@@ -158,6 +158,17 @@ class _FieldCard extends StatelessWidget {
             Text('Stage: ${field.growthStage.name}'),
             Text('Turns grown: ${field.turnsGrown}'),
             Text('Quality: ${field.quality.toStringAsFixed(2)}'),
+            Text('Fertility: ${field.fertility.toStringAsFixed(2)}'),
+            if (field.lastHarvestedFamily != null)
+              Text(
+                'Last family: ${field.lastHarvestedFamily!.name}'
+                '${field.consecutiveSameFamily > 0 ? '  (streak ${field.consecutiveSameFamily + 1})' : ''}',
+                style: TextStyle(
+                  color: field.consecutiveSameFamily > 0
+                      ? Colors.deepOrange
+                      : null,
+                ),
+              ),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
