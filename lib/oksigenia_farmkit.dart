@@ -8,6 +8,7 @@ library;
 export 'src/engine/crop.dart';
 export 'src/engine/crop_family.dart';
 export 'src/engine/farm.dart';
+export 'src/engine/farm_event.dart';
 export 'src/engine/field.dart';
 export 'src/engine/growth_stage.dart';
 export 'src/engine/soil.dart';

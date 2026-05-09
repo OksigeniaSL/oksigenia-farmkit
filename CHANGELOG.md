@@ -10,6 +10,33 @@ The first stable API will be tagged as `1.0.0`.
 
 ## [Unreleased]
 
+## [0.4.0-beta.1] — 2026-05-09
+
+### Added
+- `FarmEvent` and `FarmEventKind` — narrative-grade events the engine
+  emits as the simulation evolves. Hosts pull them with
+  `Farm.drainEvents()` after each action and decide how to surface
+  them (banners, narrator dialogs, sound effects, log entries).
+- Event kinds shipped: `monoCultureWarning`, `monoCultureCritical`,
+  `fertilityWarning`, `fertilityCritical`, `fertilityRestored`,
+  `firstNitrogenFixerHarvested`, `perfectQuality`, `rotationStreak`,
+  `harvestMilestone`.
+- `Farm.totalHarvests` cumulative counter (drives milestones).
+- `Farm.drainEvents()` returns the buffered events and clears the
+  internal queue.
+- `Farm.hydrateCounters(...)` internal hook for serialization to
+  preserve the milestone counter and "first nitrogen fixer seen"
+  flag across saves (host wiring optional).
+- 11 new tests under `test/events_test.dart` covering mono-culture
+  threshold transitions, single-fire fertility band crossings,
+  legume restoration, first-nitrogen-fixer once-only, milestones
+  exact at 5/25/100/+100k.
+
+### Notes
+- Pure additive change. Pre-existing host code keeps working;
+  consumers that ignore `drainEvents()` simply do not see the new
+  events.
+
 ## [0.3.0-beta.1] — 2026-05-09
 
 ### Added
