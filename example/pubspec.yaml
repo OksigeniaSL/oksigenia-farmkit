@@ -1,0 +1,22 @@
+name: oksigenia_farmkit_example
+description: Minimal demo of oksigenia-farmkit using Material widgets.
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  oksigenia_farmkit:
+    path: ../
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

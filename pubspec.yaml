@@ -1,0 +1,23 @@
+name: oksigenia_farmkit
+description: >-
+  Modular farming-game engine for Flutter / Flame. Turn-based loop,
+  weather-driven crop yield, quality-driven economy. Embeddable in any
+  Flutter app as a mini-game. Beta.
+version: 0.1.0-beta.1
+homepage: https://github.com/OksigeniaSL/oksigenia-farmkit
+repository: https://github.com/OksigeniaSL/oksigenia-farmkit
+issue_tracker: https://github.com/OksigeniaSL/oksigenia-farmkit/issues
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  meta: ^1.10.0
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+  flutter_test:
+    sdk: flutter
