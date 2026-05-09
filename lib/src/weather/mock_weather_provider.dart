@@ -1,12 +1,13 @@
 import 'dart:math';
 
+import 'climate_preset.dart';
 import 'weather_provider.dart';
 import 'weekly_weather.dart';
 
-/// Deterministic seasonal weather. Cycles through summer / autumn /
-/// winter / spring with a 52-week period and adds a small pseudo-
-/// random jitter seeded by the turn number so repeated calls with
-/// the same turn produce the same output.
+/// Deterministic seasonal weather. Cycles through a 52-week year
+/// driven by a `ClimatePreset` and adds a small pseudo-random jitter
+/// seeded by the turn number so repeated calls with the same turn
+/// produce the same output.
 ///
 /// Useful for tests, demos, and any host that does not wire a real
 /// meteorological API.
@@ -14,38 +15,34 @@ class MockWeatherProvider extends WeatherProvider {
   /// Seed for the jitter. Same seed + same turn = same weather.
   final int seed;
 
-  /// Base average temperature for the year, Celsius. Default `20`.
-  final double baselineTempC;
-
-  /// Peak-to-peak temperature swing through the seasonal cycle.
-  /// Default `15` (so temperatures range roughly `12.5..27.5`).
-  final double seasonalTempSwing;
+  /// Bundled climate parameters. Defaults to `ClimatePreset.temperate`.
+  final ClimatePreset climate;
 
   const MockWeatherProvider({
     this.seed = 42,
-    this.baselineTempC = 20.0,
-    this.seasonalTempSwing = 15.0,
+    this.climate = ClimatePreset.temperate,
   });
 
   /// Convenience constructor for the most common case.
   const MockWeatherProvider.seasonal() : this();
 
+  /// Convenience constructor for a specific bundled climate.
+  /// Equivalent to `MockWeatherProvider(climate: preset)` but reads
+  /// more naturally at the call site.
+  const MockWeatherProvider.forClimate(ClimatePreset preset, {int seed = 42})
+      : this(seed: seed, climate: preset);
+
   @override
   WeeklyWeather sample({required int turn}) {
-    // Seasonal sine: 52 weeks per year. Phase offset puts week 0 at
-    // the start of summer in the southern hemisphere context the
-    // kit was bootstrapped from, but the result is symmetric around
-    // the baseline so consumers in any hemisphere stay sensible.
-    final phase = (2 * pi * (turn % 52)) / 52;
-    final seasonal = sin(phase);
-    final temp = baselineTempC + (seasonalTempSwing / 2) * seasonal;
+    final base = climate.sample(turn);
 
     // Jitter: deterministic pseudo-random based on turn + seed.
     final jitter = Random(seed ^ turn);
     final tempJitter = (jitter.nextDouble() - 0.5) * 4.0;
-    final precipMm = jitter.nextDouble() * 30.0;
+    final precipJitter = (jitter.nextDouble() - 0.5) * 8.0;
 
-    final actualTemp = temp + tempJitter;
+    final actualTemp = base.tempC + tempJitter;
+    final actualPrecip = (base.precipMm + precipJitter).clamp(0.0, 200.0);
 
     // Growth factor: penalize extreme temperatures (<5° or >35°)
     // and very dry weeks (<2 mm) or extremely wet weeks (>50 mm).
@@ -59,18 +56,18 @@ class MockWeatherProvider extends WeatherProvider {
     } else if (actualTemp > 30) {
       factor *= 0.7;
     }
-    if (precipMm < 2) {
+    if (actualPrecip < 2) {
       factor *= 0.6;
-    } else if (precipMm > 50) {
+    } else if (actualPrecip > 50) {
       factor *= 0.5;
     }
 
-    final label = _label(actualTemp, precipMm);
+    final label = _label(actualTemp, actualPrecip);
 
     return WeeklyWeather(
       growthFactor: factor.clamp(0.0, 1.0),
       temperatureC: actualTemp,
-      precipitationMm: precipMm,
+      precipitationMm: actualPrecip,
       label: label,
     );
   }

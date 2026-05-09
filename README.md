@@ -55,7 +55,7 @@ Once published to pub.dev:
 
 ```yaml
 dependencies:
-  oksigenia_farmkit: ^0.2.0-beta.1
+  oksigenia_farmkit: ^0.3.0-beta.1
 ```
 
 Until then, depend on the GitHub repo:
@@ -96,9 +96,9 @@ Tracked work lives in the [project board](https://github.com/orgs/OksigeniaSL/pr
 
 - Crop pest / disease subsystem.
 - ~~Soil degradation & rotation rewards.~~ Shipped in `0.2.0-beta.1`.
-- Multi-region weather (climates).
+- ~~Multi-region weather (climates).~~ Shipped in `0.3.0-beta.1`.
 - Saved-game migration helpers between minor versions.
-- Pub.dev publication after `0.3.0`.
+- Pub.dev publication after `0.4.0`.
 
 ---
 

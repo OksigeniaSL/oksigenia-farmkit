@@ -10,6 +10,32 @@ The first stable API will be tagged as `1.0.0`.
 
 ## [Unreleased]
 
+## [0.3.0-beta.1] — 2026-05-09
+
+### Added
+- `ClimatePreset` value object: a compact bundle of seasonal
+  parameters (baseline temperature, swing, precipitation, hemisphere
+  flag, phase offset). Pluggable into `MockWeatherProvider`.
+- Five bundled presets: `temperate`, `tropical`, `mediterranean`,
+  `continental`, `subtropicalSouthernCone`.
+- `MockWeatherProvider.forClimate(preset)` named constructor.
+- `ClimatePreset.bundled` exposes all five for "pick a climate" UIs.
+- Test suite extended with 8 new tests covering seasonal averages,
+  swing comparisons, southern-hemisphere phase, precipitation
+  non-negativity and per-preset determinism.
+
+### Changed
+- `MockWeatherProvider` now takes a `ClimatePreset` instead of the
+  ad-hoc `baselineTempC` / `seasonalTempSwing` parameters. The default
+  preset (`temperate`) reproduces the pre-0.3 behaviour, so callers
+  using `MockWeatherProvider.seasonal()` see no change. Callers that
+  passed the old named arguments must migrate to a preset.
+
+### Migration notes
+- If you instantiated `MockWeatherProvider(baselineTempC: …,
+  seasonalTempSwing: …)`, declare a custom `ClimatePreset` with those
+  values and pass it via `climate:`.
+
 ## [0.2.0-beta.1] — 2026-05-09
 
 ### Added
