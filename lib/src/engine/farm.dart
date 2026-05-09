@@ -54,6 +54,10 @@ class Farm {
   /// once on transition instead of every turn.
   final Map<String, _FertilityBand> _lastFertilityBand = {};
 
+  /// Internal: tracks the most recently emitted pest band per field,
+  /// for the same single-fire reason as the fertility band.
+  final Map<String, _PestBand> _lastPestBand = {};
+
   /// Buffered events. Hosts pull and clear with `drainEvents()`.
   final List<FarmEvent> _events = [];
 
@@ -64,6 +68,7 @@ class Farm {
   }) : economy = economy ?? const LinearQualityPricing() {
     for (final f in fields) {
       _lastFertilityBand[f.id] = _bandOf(f.fertility);
+      _lastPestBand[f.id] = _pestBandOf(f.pestPressure);
     }
   }
 
@@ -132,8 +137,9 @@ class Farm {
     _turn += 1;
     final w = weather.sample(turn: _turn);
     for (final f in fields) {
-      f.advance(weatherFactor: w.growthFactor);
+      f.advance(weatherFactor: w.growthFactor, pestRisk: w.pestRisk);
       _checkFertilityBand(f);
+      _checkPestBand(f);
     }
     return w.growthFactor;
   }
@@ -186,7 +192,22 @@ class Farm {
     // Harvest may also push fertility above the restored threshold
     // (legume covers add fertility). Re-check the band.
     _checkFertilityBand(f);
+    // Cosechar rompe el ciclo de plagas — el pestPressure cae al 30%.
+    // Re-emitir el band check para que `pestCleared` se dispare si
+    // cruza hacia abajo de 0.1.
+    _checkPestBand(f);
     return yieldAmount;
+  }
+
+  /// Apply a pest treatment to a single field. Reduces the field's
+  /// `pestPressure` by `reduction` (default `0.5`, clamped at 0).
+  /// Emits `pestCleared` if the pressure crosses below the healthy
+  /// threshold. Does NOT consume a turn — host apps that want to
+  /// charge an action cost can wrap this method.
+  void treat(String fieldId, {double reduction = 0.5}) {
+    final f = field(fieldId);
+    f.applyTreatment(reduction: reduction);
+    _checkPestBand(f);
   }
 
   /// Pull every event accumulated since the last call. Returns an
@@ -253,6 +274,54 @@ class Farm {
     if (fertility < 0.5) return _FertilityBand.warning;
     return _FertilityBand.healthy;
   }
+
+  // ── Pest band tracking ──────────────────────────────────────────
+  void _checkPestBand(Field f) {
+    final newBand = _pestBandOf(f.pestPressure);
+    final oldBand = _lastPestBand[f.id] ?? _PestBand.healthy;
+    if (newBand == oldBand) return;
+    _lastPestBand[f.id] = newBand;
+    switch (newBand) {
+      case _PestBand.outbreak:
+        if (oldBand == _PestBand.healthy) {
+          _events.add(FarmEvent(
+            kind: FarmEventKind.pestOutbreak,
+            fieldId: f.id,
+            crop: f.crop,
+            family: f.crop?.family,
+            metadata: {'pestPressure': f.pestPressure},
+          ));
+        }
+        break;
+      case _PestBand.critical:
+        _events.add(FarmEvent(
+          kind: FarmEventKind.pestCritical,
+          fieldId: f.id,
+          crop: f.crop,
+          family: f.crop?.family,
+          metadata: {'pestPressure': f.pestPressure},
+        ));
+        break;
+      case _PestBand.healthy:
+        if (oldBand != _PestBand.healthy) {
+          _events.add(FarmEvent(
+            kind: FarmEventKind.pestCleared,
+            fieldId: f.id,
+            crop: f.crop,
+            family: f.crop?.family,
+            metadata: {'pestPressure': f.pestPressure},
+          ));
+        }
+        break;
+    }
+  }
+
+  static _PestBand _pestBandOf(double pestPressure) {
+    if (pestPressure > 0.7) return _PestBand.critical;
+    if (pestPressure > 0.3) return _PestBand.outbreak;
+    return _PestBand.healthy;
+  }
 }
 
 enum _FertilityBand { healthy, warning, critical }
+enum _PestBand { healthy, outbreak, critical }

@@ -55,6 +55,21 @@ class Crop {
   /// host apps can flag any crop as a soil restorer.
   final bool fixesNitrogen;
 
+  /// Vulnerability to pests and diseases, in `[0, 1]`. Multiplies
+  /// the weekly `WeeklyWeather.pestRisk` to determine how fast the
+  /// field's `pestPressure` accumulates. `0.0` means pest-immune
+  /// (rare); `1.0` means highly susceptible. Default `0.5` is the
+  /// middle-of-the-road that lets hosts opt in gradually.
+  ///
+  /// Rule of thumb for tuning:
+  /// - Hardy crops (root vegetables, legumes that fix nitrogen):
+  ///   `0.2 - 0.4`.
+  /// - Average commercial crops (grass cereals, robust greens):
+  ///   `0.4 - 0.6`.
+  /// - Susceptible crops (tomato/nightshade, leafy salads, brassicas
+  ///   that attract aphids): `0.7 - 0.9`.
+  final double pestSusceptibility;
+
   const Crop({
     required this.id,
     required this.displayName,
@@ -64,6 +79,7 @@ class Crop {
     this.family = CropFamily.other,
     this.nutrientDemand = 0.1,
     this.fixesNitrogen = false,
+    this.pestSusceptibility = 0.5,
   });
 
   /// Wheat-like archetype. Fast cycle, hardy, low margin.

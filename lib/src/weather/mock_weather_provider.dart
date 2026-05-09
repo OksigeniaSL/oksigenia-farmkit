@@ -69,7 +69,18 @@ class MockWeatherProvider extends WeatherProvider {
       temperatureC: actualTemp,
       precipitationMm: actualPrecip,
       label: label,
+      pestRisk: _pestRisk(actualTemp, actualPrecip),
     );
+  }
+
+  /// Mosquitos, hongos y plagas en general explotan con calor +
+  /// humedad. Modelo simple: cada eje normalizado en [0, 1] y
+  /// multiplicado. Días fríos o secos rinden cerca de 0; semanas
+  /// 28°C+ con 30+ mm rinden cerca de 1.
+  double _pestRisk(double temp, double precip) {
+    final tempFactor = ((temp - 18) / 12).clamp(0.0, 1.0);
+    final humidityFactor = (precip / 50).clamp(0.0, 1.0);
+    return tempFactor * humidityFactor;
   }
 
   String _label(double temp, double precip) {

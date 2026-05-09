@@ -17,10 +17,19 @@ class WeeklyWeather {
   /// Localized strings are the host app's responsibility.
   final String label;
 
+  /// Likelihood of pest / disease outbreak during this week, in
+  /// `[0, 1]`. Hot and humid weeks push it up; dry and cool weeks
+  /// keep it low. Defaults to `0.0` so weather providers that pre-date
+  /// the pest subsystem (or hosts that disable it) cause no pest
+  /// pressure on fields. Combined with `Crop.pestSusceptibility`
+  /// at the field level to drive `pestPressure` accumulation.
+  final double pestRisk;
+
   const WeeklyWeather({
     required this.growthFactor,
     required this.temperatureC,
     required this.precipitationMm,
     required this.label,
+    this.pestRisk = 0.0,
   });
 }

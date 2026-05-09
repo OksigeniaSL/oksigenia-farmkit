@@ -10,6 +10,42 @@ The first stable API will be tagged as `1.0.0`.
 
 ## [Unreleased]
 
+## [0.6.0-beta.1] — 2026-05-09
+
+### Added
+- `WeeklyWeather.pestRisk` (default `0.0`) — likelihood of a pest /
+  disease outbreak this week, in `[0, 1]`. Hot+humid weeks push it
+  up. `MockWeatherProvider` now computes it from the actual temp +
+  precipitation (so tropical climates rate higher than continental).
+- `Crop.pestSusceptibility` (default `0.5`) — vulnerability to pests
+  per crop. Multiplied with `pestRisk` to drive `Field.pestPressure`
+  accumulation.
+- `Field.pestPressure` getter and accumulation logic during
+  `advance(weatherFactor, pestRisk)`. Pressure persists across turns,
+  decays during fallow (`-0.10/turn`), and is reset partially on
+  harvest (`× 0.3`).
+- `Field.advance` now penalises quality by up to 50% when
+  `pestPressure` is at 1.0, scaling linearly. Sick fields still grow
+  but yield mediocre crops.
+- `Field.applyTreatment(reduction)` to manually clear pressure.
+- `Farm.treat(fieldId, reduction)` — host-side action to apply a
+  treatment. Emits `pestCleared` if pressure crosses below 0.1.
+- `FarmEventKind.pestOutbreak` (>0.3), `pestCritical` (>0.7),
+  `pestCleared` (<0.1).
+- `Farm` constructor seeds the per-field pest band tracker.
+- 12 new tests under `test/pest_test.dart`. 72 total.
+
+### Changed
+- `Field.advance` signature now accepts `pestRisk` (default `0.0`).
+  Existing callers without pests see no change.
+
+### Notes
+- Backwards compatible. Hosts whose `WeatherProvider` does not set
+  `pestRisk` get the default `0.0` and pests never appear. Hosts
+  whose `Crop` definitions do not set `pestSusceptibility` get the
+  default `0.5` (medium); to opt out of the pest subsystem entirely,
+  set it to `0.0` per crop.
+
 ## [0.5.0-beta.1] — 2026-05-09
 
 ### Added

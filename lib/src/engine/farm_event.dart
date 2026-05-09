@@ -38,6 +38,16 @@ enum FarmEventKind {
 
   /// Total accumulated harvests reached a milestone (5 / 25 / 100).
   harvestMilestone,
+
+  /// Field's pestPressure crossed above 0.3 — first sign of trouble.
+  pestOutbreak,
+
+  /// Field's pestPressure crossed above 0.7 — yields will suffer hard.
+  pestCritical,
+
+  /// Pest pressure returned below 0.1 after treatment / harvest /
+  /// fallow decay. Lets the host reassure the player.
+  pestCleared,
 }
 
 /// A single event emitted by the engine. Immutable record-style.
