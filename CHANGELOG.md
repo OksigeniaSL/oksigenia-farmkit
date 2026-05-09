@@ -10,6 +10,24 @@ The first stable API will be tagged as `1.0.0`.
 
 ## [Unreleased]
 
+## [0.7.0-beta.1] — 2026-05-09
+
+### Added
+- `Farm(actionsPerTurn: int)` optional constructor parameter. When
+  set, every call to `plant`, `harvest` or `treat` consumes one
+  action from a per-turn budget. `advanceTurn` refills it. Hosts
+  catch `OutOfActionsError` to nudge the player.
+- `Farm.actionsRemaining` getter for HUDs.
+- `OutOfActionsError` (extends StateError) thrown when an action
+  runs while the budget is at zero. Message is in Spanish for the
+  default flavour but hosts can override per-throw if needed.
+- 8 new tests under `test/actions_budget_test.dart`. 80 total.
+
+### Notes
+- Pure additive. Default `actionsPerTurn = null` preserves the
+  pre-0.7 behaviour: no budget, infinite actions per turn. Hosts
+  opt in by passing a positive integer.
+
 ## [0.6.0-beta.1] — 2026-05-09
 
 ### Added

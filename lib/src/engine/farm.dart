@@ -61,15 +61,43 @@ class Farm {
   /// Buffered events. Hosts pull and clear with `drainEvents()`.
   final List<FarmEvent> _events = [];
 
+  /// Maximum actions the player can take per turn. `null` disables
+  /// the budget (every action is free, behaviour identical to
+  /// pre-0.7 farms). Default `null` for backwards compatibility —
+  /// hosts adopt the budget by passing a positive integer.
+  final int? actionsPerTurn;
+
+  /// Remaining actions in the current turn. Decremented by `plant`,
+  /// `harvest`, `treat`. Refilled to `actionsPerTurn` on
+  /// `advanceTurn`. When `actionsPerTurn` is `null`, this stays
+  /// `null` and no checks are made.
+  int? _actionsRemaining;
+  int? get actionsRemaining => _actionsRemaining;
+
   Farm({
     required this.fields,
     required this.weather,
     EconomyProvider? economy,
+    this.actionsPerTurn,
   }) : economy = economy ?? const LinearQualityPricing() {
     for (final f in fields) {
       _lastFertilityBand[f.id] = _bandOf(f.fertility);
       _lastPestBand[f.id] = _pestBandOf(f.pestPressure);
     }
+    _actionsRemaining = actionsPerTurn;
+  }
+
+  /// Throws `OutOfActionsError` if the action budget is enabled and
+  /// hits zero before the action runs. Hosts that catch this can
+  /// nudge the player ("se te acabaron las acciones esta semana").
+  void _consumeAction() {
+    if (actionsPerTurn == null) return;
+    final remaining = _actionsRemaining ?? 0;
+    if (remaining <= 0) {
+      throw OutOfActionsError(
+          'No hay acciones disponibles esta semana. Pasá la semana.');
+    }
+    _actionsRemaining = remaining - 1;
   }
 
   /// Look up a field by id. Throws `StateError` if no such field
@@ -84,7 +112,11 @@ class Farm {
   /// Plant a crop on a specific field. Convenience method that
   /// delegates to `Field.plant`. Emits `monoCultureWarning` /
   /// `monoCultureCritical` if the same family piles up on the field.
+  ///
+  /// Consumes one action from the per-turn budget if `actionsPerTurn`
+  /// is set; throws `OutOfActionsError` when the budget is exhausted.
   void plant({required String fieldId, required Crop crop}) {
+    _consumeAction();
     final f = field(fieldId);
     f.plant(crop);
     final streak = f.consecutiveSameFamily;
@@ -135,6 +167,10 @@ class Farm {
   /// and emits the corresponding events.
   double advanceTurn() {
     _turn += 1;
+    // Recargar el presupuesto de acciones para el nuevo turno. Si
+    // el budget está deshabilitado (`actionsPerTurn == null`), esto
+    // se queda en null y `_consumeAction` no chequea nada.
+    _actionsRemaining = actionsPerTurn;
     final w = weather.sample(turn: _turn);
     for (final f in fields) {
       f.advance(weatherFactor: w.growthFactor, pestRisk: w.pestRisk);
@@ -147,7 +183,11 @@ class Farm {
   /// Harvest a single field. See `Field.harvest`. Emits
   /// `perfectQuality`, `firstNitrogenFixerHarvested`, and
   /// `harvestMilestone` events as applicable.
+  ///
+  /// Consumes one action from the per-turn budget if `actionsPerTurn`
+  /// is set; throws `OutOfActionsError` when exhausted.
   double harvest(String fieldId) {
+    _consumeAction();
     final f = field(fieldId);
     final crop = f.crop;
     final qualityBefore = f.quality;
@@ -202,9 +242,11 @@ class Farm {
   /// Apply a pest treatment to a single field. Reduces the field's
   /// `pestPressure` by `reduction` (default `0.5`, clamped at 0).
   /// Emits `pestCleared` if the pressure crosses below the healthy
-  /// threshold. Does NOT consume a turn — host apps that want to
-  /// charge an action cost can wrap this method.
+  /// threshold. Consumes one action from the per-turn budget if
+  /// `actionsPerTurn` is set; throws `OutOfActionsError` when
+  /// exhausted.
   void treat(String fieldId, {double reduction = 0.5}) {
+    _consumeAction();
     final f = field(fieldId);
     f.applyTreatment(reduction: reduction);
     _checkPestBand(f);
@@ -325,3 +367,11 @@ class Farm {
 
 enum _FertilityBand { healthy, warning, critical }
 enum _PestBand { healthy, outbreak, critical }
+
+/// Thrown by `Farm.plant` / `Farm.harvest` / `Farm.treat` when the
+/// per-turn action budget has been consumed. Hosts catch this to
+/// notify the player that they need to advance the week before
+/// taking more actions. Messages are intended for display.
+class OutOfActionsError extends StateError {
+  OutOfActionsError(super.message);
+}
