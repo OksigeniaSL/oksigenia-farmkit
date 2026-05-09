@@ -4,7 +4,7 @@
 
 Turn-based, weather-driven crop yield, quality-driven economy. Designed to be embedded in any Flutter app that needs a farm-simulation mini-game.
 
-> **Status: `0.4.0-beta.1`** — public API is not yet stable. Expect breaking changes between minor versions until `1.0.0`.
+> **Status: `0.5.0-beta.1`** — public API is not yet stable. Expect breaking changes between minor versions until `1.0.0`.
 
 **[▶ Live demo](https://oksigeniasl.github.io/oksigenia-farmkit/)** (Flutter web · auto-deployed from `main`).
 
@@ -57,7 +57,7 @@ Once published to pub.dev:
 
 ```yaml
 dependencies:
-  oksigenia_farmkit: ^0.4.0-beta.1
+  oksigenia_farmkit: ^0.5.0-beta.1
 ```
 
 Until then, depend on the GitHub repo:

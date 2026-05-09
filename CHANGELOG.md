@@ -10,6 +10,32 @@ The first stable API will be tagged as `1.0.0`.
 
 ## [Unreleased]
 
+## [0.5.0-beta.1] — 2026-05-09
+
+### Added
+- `Season` enum (summer, autumn, winter, spring) and `seasonForTurn`
+  helper that maps a turn number to its season, with a
+  `southernHemisphere` flag that shifts the calendar 6 months for
+  hosts whose farm sits south of the equator.
+- `SeasonalDynamicPricing` extends `LinearQualityPricing` with two
+  modulators:
+  - **Seasonal demand** per `CropFamily`: nightshade and grass peak in
+    winter; leafy greens command a premium in summer; root crops shine
+    in winter; brassicas peak in winter; legumes are stable.
+  - **Weather shock**: drought weeks (precip < 2 mm) lift price by
+    `droughtShock` (default 1.18), flood weeks (precip > 60 mm) by
+    `floodShock` (default 1.12). Moderate weather is neutral.
+- `dynamicPrice(crop, quality, turn, currentWeather)` returns the
+  modulated value. `seasonalTrend(crop, turn)` returns just the
+  seasonal multiplier so hosts can render UI trend indicators.
+- 11 new tests under `test/dynamic_pricing_test.dart`. 60 passing.
+
+### Notes
+- Pure additive change. Hosts using `LinearQualityPricing` see no
+  difference. Hosts that adopt `SeasonalDynamicPricing` and call
+  `expectedPrice` (the inherited method) keep getting the legacy
+  quality-only price; only `dynamicPrice` activates the modulators.
+
 ## [0.4.0-beta.1] — 2026-05-09
 
 ### Added
