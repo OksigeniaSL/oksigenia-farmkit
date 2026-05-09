@@ -120,6 +120,17 @@ Copyright © 2026 Oksigenia SL.
 
 ---
 
+## Sponsor / Donaciones
+
+This project is developed in the open and offered under MIT. If it saves you time or you want to support continued development, you can chip in:
+
+- **Liberapay** (recurring, no fees): https://liberapay.com/Oksigenia
+- **PayPal** (one-off): https://www.paypal.com/donate/?business=paypal@oksigenia.cc&currency_code=EUR
+
+A "Sponsor" button is also enabled at the top of this repository (powered by [`.github/FUNDING.yml`](.github/FUNDING.yml)).
+
+---
+
 ## En castellano
 
 `oksigenia-farmkit` es un motor de juego de granja para Flutter / Flame. Turnos semanales, rendimiento de cultivos según clima real o simulado, economía sensible a la calidad. Embebible en cualquier app Flutter como minijuego.
