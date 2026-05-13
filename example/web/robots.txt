@@ -1,0 +1,36 @@
+# robots.txt — oksigeniasl.github.io/oksigenia-farmkit
+# Open source kit demo. Allow all crawlers.
+
+User-agent: *
+Allow: /
+
+# Explicit allow for AI crawlers (some honor explicit lists only).
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /

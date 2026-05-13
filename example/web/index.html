@@ -6,19 +6,103 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="Live demo of oksigenia-farmkit, a modular farming-game engine for Flutter and Flame. Plant, watch the weather, harvest, watch the soil degrade and rotate to keep it productive.">
+
+  <title>oksigenia-farmkit · Modular farming-game engine for Flutter / Flame</title>
+  <meta name="description" content="oksigenia-farmkit: a modular farming-game engine for Flutter / Flame. Turn-based loop, weather-driven crop yield, quality-driven economy, soil rotation, pest pressure, action budget. Embeddable in any Flutter app as a mini-game. Open source, BSD." />
+  <meta name="keywords" content="flutter, flame, dart, game engine, farming game, agriculture simulation, open source, oksigenia, granja oga" />
+  <meta name="theme-color" content="#2f5243" />
 
   <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="farmkit demo">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>oksigenia-farmkit · live demo</title>
   <link rel="manifest" href="manifest.json">
+  <link rel="canonical" href="https://oksigeniasl.github.io/oksigenia-farmkit/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="oksigenia-farmkit" />
+  <meta property="og:url" content="https://oksigeniasl.github.io/oksigenia-farmkit/" />
+  <meta property="og:title" content="oksigenia-farmkit · Modular farming-game engine for Flutter / Flame" />
+  <meta property="og:description" content="Turn-based, weather-driven crop yield. Embeddable as a mini-game in any Flutter app. Open source." />
+
+  <!-- Twitter card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="oksigenia-farmkit · Modular farming-game engine" />
+  <meta name="twitter:description" content="Turn-based, weather-driven crop yield. Embeddable in any Flutter app. Open source." />
+
+  <!-- Structured data: SoftwareSourceCode + WebApplication + Organization.
+       Both Google and IA crawlers (GPTBot, ClaudeBot, Perplexity, etc.)
+       use JSON-LD to understand what this is and cite it accurately. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://granjaoga.com/#org",
+        "name": "Granja Óga",
+        "alternateName": "Granja Oga",
+        "url": "https://granjaoga.com/",
+        "description": "Iniciativa familiar paraguaya con base en Cordillera (Capiivary).",
+        "areaServed": [
+          { "@type": "Country", "name": "Paraguay" },
+          { "@type": "Place", "name": "LATAM (diáspora paraguaya)" }
+        ],
+        "sameAs": [
+          "https://github.com/Oksigenia/granjaoga",
+          "https://github.com/OksigeniaSL/oksigenia-farmkit",
+          "https://t.me/OgaGranja",
+          "https://www.youtube.com/@GranjaOga"
+        ]
+      },
+      {
+        "@type": "SoftwareSourceCode",
+        "@id": "https://github.com/OksigeniaSL/oksigenia-farmkit#code",
+        "name": "oksigenia-farmkit",
+        "description": "Modular farming-game engine for Flutter / Flame. Turn-based loop, weather-driven crop yield, quality-driven economy, soil rotation, pest pressure, per-turn action budget.",
+        "codeRepository": "https://github.com/OksigeniaSL/oksigenia-farmkit",
+        "programmingLanguage": "Dart",
+        "runtimePlatform": "Flutter",
+        "license": "https://opensource.org/licenses/BSD-3-Clause",
+        "version": "0.7.0-beta.2",
+        "author": { "@id": "https://granjaoga.com/#org" }
+      },
+      {
+        "@type": "WebApplication",
+        "@id": "https://oksigeniasl.github.io/oksigenia-farmkit/#demo",
+        "name": "oksigenia-farmkit live demo",
+        "url": "https://oksigeniasl.github.io/oksigenia-farmkit/",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web (modern browser, JS, WebAssembly recommended)",
+        "browserRequirements": "Requires a modern browser with JavaScript and WebAssembly enabled.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "publisher": { "@id": "https://granjaoga.com/#org" }
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
+  <!-- Fallback / SEO-readable content for crawlers and users without JS.
+       Crawlers (Google, GPTBot, ClaudeBot, Perplexity) can read this
+       before the Flutter canvas hydrates. Hidden visually once the
+       app boots — we just leave it for indexing. -->
+  <noscript>
+    <article style="max-width:720px;margin:2em auto;padding:1em;font-family:system-ui,sans-serif;line-height:1.5;color:#333">
+      <h1>oksigenia-farmkit</h1>
+      <p><strong>Modular farming-game engine for Flutter / Flame.</strong></p>
+      <p>Turn-based loop, weather-driven crop yield, quality-driven economy. Designed to be embedded in any Flutter app that needs a farm-simulation mini-game.</p>
+      <p>This live demo requires JavaScript. <a href="https://github.com/OksigeniaSL/oksigenia-farmkit">Source code on GitHub</a>.</p>
+    </article>
+  </noscript>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

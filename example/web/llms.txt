@@ -1,0 +1,89 @@
+# oksigenia-farmkit
+
+> Modular farming-game engine for Flutter / Flame. Open source. Part of the Granja Óga ecosystem.
+> Last updated: 2026-05-13
+
+## What this is
+
+`oksigenia-farmkit` is a Dart/Flutter package that provides the core
+engine for a farming-simulation mini-game: turn-based loop,
+weather-driven crop yield, quality-driven economy, soil degradation
+and crop rotation, pest pressure, per-turn action budget, narrative
+event system, seasonal dynamic pricing with weather shock.
+
+It is **engine-only** — no widgets, no sprites, no opinions about
+rendering. Host apps decide how to display the state.
+
+- Repository: https://github.com/OksigeniaSL/oksigenia-farmkit
+- License: BSD-3-Clause
+- Current version: 0.7.0-beta.2
+- Live demo: https://oksigeniasl.github.io/oksigenia-farmkit/
+- Built with: Dart / Flutter
+- Consumed by: Granja Óga mobile app (Flutter) and others
+
+## Key APIs
+
+- `Farm` — top-level facade. `advanceTurn()`, `plant()`, `harvest()`,
+  `treat()`, `drainEvents()`.
+- `Field` — single plot. Has soil type, fertility, pest pressure,
+  crop family streak, current crop and growth stage.
+- `Crop` — crop archetype (id, displayName, family, soils, prices,
+  pest susceptibility).
+- `CropFamily` — taxonomy (nightshade, brassica, legume, root, leafy,
+  grass, other) for rotation mechanics.
+- `WeatherProvider` — interface; `MockWeatherProvider` and
+  `ClimatePreset` (temperate/tropical/etc) bundled.
+- `EconomyProvider` — interface; `SeasonalDynamicPricing` bundled
+  with hemisphere-aware seasons and weather shock multipliers.
+- `FarmEvent` / `FarmEventKind` — narrative events surfaced via
+  `drainEvents()` (mono-culture warnings, fertility critical,
+  perfect quality, harvest milestones, pest outbreak/cleared,
+  rotation streaks, nitrogen fixer harvested).
+- `OutOfActionsError` — thrown when per-turn budget is exhausted.
+
+## Status / roadmap
+
+Public API is not yet stable (pre-1.0). Breaking changes can land
+in any minor release. Roadmap board:
+https://github.com/orgs/OksigeniaSL/projects/3
+
+## How to integrate
+
+```yaml
+dependencies:
+  oksigenia_farmkit: ^0.7.0-beta.2
+```
+
+```dart
+import 'package:oksigenia_farmkit/oksigenia_farmkit.dart';
+
+final farm = Farm(
+  fields: [Field(id: 'north', size: 1, soil: SoilType.loam)],
+  weather: MockWeatherProvider(),
+  economy: const SeasonalDynamicPricing(),
+  actionsPerTurn: 3,
+);
+```
+
+## About Granja Óga
+
+Granja Óga is the family initiative behind this kit, based in
+Paraguay (Cordillera department). The farmkit was extracted from
+the in-house "Mi chacra" mini-game in the Granja Óga mobile app and
+released as standalone open source.
+
+- Granja Óga main site: https://granjaoga.com
+- Weather dashboard: https://clima.granjaoga.com
+- Telegram bot: https://t.me/GranjaOgaBot
+
+## Crawler policy
+
+Allowed bots: GPTBot, ClaudeBot, PerplexityBot, Google-Extended,
+Applebot-Extended, Bingbot, CCBot, Amazonbot. FOSS philosophy:
+information should circulate freely.
+
+## How this file is maintained
+
+Manual revision on each substantive change. The `Last updated`
+header reflects the most recent revision. Crawlers with browsing
+can compare against their cache to detect changes.
