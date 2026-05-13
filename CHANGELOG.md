@@ -10,6 +10,25 @@ The first stable API will be tagged as `1.0.0`.
 
 ## [Unreleased]
 
+## [0.7.0-beta.2] — 2026-05-13
+
+### Changed
+- **Demo web** (`example/lib/main.dart`) — visual upgrade: hero card,
+  feature pills, stat bars, brand colors. Surfacing the features
+  shipped in 0.4-0.7 (narrative events, seasonal pricing + weather
+  shock, pest subsystem, per-turn action budget) in a single screen
+  that auto-deploys to GitHub Pages from `main`.
+- **README** — surface 0.4-0.7 features and add donation links
+  (Liberapay + PayPal).
+
+### Added
+- `.github/FUNDING.yml` — Liberapay + PayPal sponsorship buttons.
+
+### Notes
+- Pure docs / demo release. Public API and tests unchanged from
+  0.7.0-beta.1. Consumers of the lib don't need to update unless
+  they want the refreshed example.
+
 ## [0.7.0-beta.1] — 2026-05-09
 
 ### Added
