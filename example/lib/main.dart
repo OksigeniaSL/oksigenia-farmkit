@@ -226,16 +226,41 @@ class _HeroCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(Icons.agriculture, color: Color(0xFFE4E2DA), size: 28),
-                SizedBox(width: 10),
-                Text(
+                const Icon(Icons.agriculture, color: Color(0xFFE4E2DA), size: 28),
+                const SizedBox(width: 10),
+                const Text(
                   'oksigenia-farmkit',
                   style: TextStyle(
                     color: Color(0xFFE4E2DA),
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                // Badge de versión: tag git que se actualiza con cada
+                // release. Hardcoded acá porque pubspec no es legible en
+                // runtime web sin generadores; el bump manual va de la
+                // mano del bump del pubspec.yaml.
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE4E2DA).withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: const Color(0xFFE4E2DA).withValues(alpha: 0.4),
+                    ),
+                  ),
+                  child: const Text(
+                    'v0.7.0-beta.2',
+                    style: TextStyle(
+                      color: Color(0xFFE4E2DA),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      fontFeatures: [FontFeature.tabularFigures()],
+                    ),
                   ),
                 ),
               ],
